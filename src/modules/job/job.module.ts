@@ -1,6 +1,6 @@
 import { MiddlewareConsumer,Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { Job, JobSchema } from './model/job.schema'
+import { Job, JobSchema } from '../../database/schemas/job.schema'
 
 @Module({
     imports:[

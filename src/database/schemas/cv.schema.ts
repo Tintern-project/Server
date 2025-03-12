@@ -1,10 +1,9 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from 'mongoose';
 
-export type CVDocument = CV & Document;
 
 @Schema({ timestamps: true })
-export class CV {
+export class CV extends Document{
   @Prop({ref: "User", required: true })
   userId: string;
 
@@ -25,8 +24,6 @@ export class CV {
 
   @Prop()
   atsScore?: number; // Last calculated ATS score for a job
-
-  readonly _id?: string;
 }
 
 export const CVSchema = SchemaFactory.createForClass(CV);

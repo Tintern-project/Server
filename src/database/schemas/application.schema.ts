@@ -1,10 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type ApplicationDocument = Application & Document;
 
 @Schema({ timestamps: true })
-export class Application {
+export class Application extends Document{
   @Prop({ ref: "user", required: true })
   userId: string;
 
@@ -19,8 +18,6 @@ export class Application {
 
   @Prop()
   atsScore: number;
-
-  readonly _id?: string;
 }
 
 export const ApplicationSchema = SchemaFactory.createForClass(Application);
