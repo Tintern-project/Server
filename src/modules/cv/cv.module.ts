@@ -1,6 +1,6 @@
 import { MiddlewareConsumer,Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { CV, CVSchema } from '../database/schemas/cv.schema'
+import { CV, CVSchema } from '../../database/schemas/cv.schema'
 
 @Module({
     imports:[

@@ -34,6 +34,8 @@ async function bootstrap() {
   cachedApp = app;
 }
 
+bootstrap();
+
 export default async (req, res) => {
   if (!cachedApp) {
     await bootstrap();

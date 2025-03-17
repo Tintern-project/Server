@@ -1,6 +1,6 @@
 import { MiddlewareConsumer,Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { Application, ApplicationSchema } from '../database/schemas/application.schema'
+import { Application, ApplicationSchema } from '../../database/schemas/application.schema'
 
 @Module({
     imports:[
