@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { User } from '../../database/schemas/user.schema';
@@ -12,11 +12,13 @@ export class UserService {
   ) {}
 
   // Method to update a user by ID
-  async updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<MyProfileDto | null> {
+  async updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<MyProfileDto> {
     const user = await this.userModel.findByIdAndUpdate(userId, updateUserDto, { new: true }).exec();
+    
     if (!user) {
-      return null;
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
+    
     const myProfile: MyProfileDto = {
       name: user.name,
       email: user.email,
@@ -27,11 +29,13 @@ export class UserService {
   }
   
   // Method to get user profile by ID
-  async getMyProfile(userId: string): Promise<MyProfileDto | null> {
+  async getMyProfile(userId: string): Promise<MyProfileDto> {
     const user = await this.userModel.findById(userId).exec();
+    
     if (!user) {
-      return null;
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
+    
     const myProfile: MyProfileDto = {
         name: user.name,
         email: user.email,

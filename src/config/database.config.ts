@@ -5,6 +5,6 @@ dotenv.config();
 export const DatabaseConfig = {
   uri: process.env.MONGO_URI,
   options: {
-    dbName: 'Tintern', 
+    dbName: 'Database', 
   },
 };
