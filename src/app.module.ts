@@ -8,6 +8,7 @@ import { ApplicationModule } from './modules/application/application.module';
 import { JobModule } from './modules/job/job.module';
 import { AppConfig } from './config/app.config';
 import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './Auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { DatabaseModule } from './database/database.module';
       isGlobal: true,
     }),
     DatabaseModule,
+    AuthModule,
     UserModule,
     ApplicationModule,
     JobModule,
