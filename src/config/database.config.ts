@@ -5,6 +5,6 @@ dotenv.config();
 export const DatabaseConfig = {
   uri: 'mongodb://localhost:27017/nestdb',
   options: {
-    dbName: 'Database', 
+    dbName: 'nestdb', 
   },
 };

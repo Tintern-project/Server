@@ -1,7 +1,16 @@
 import { Injectable, InternalServerErrorException,} from '@nestjs/common';
+import { InjectModel} from '@nestjs/mongoose';
+import {Model} from 'mongoose'
+import { User, UserDocument, UserSchema } from '../../database/schemas/user.schema'
+import { unlink } from 'fs/promises';
+import { error } from 'console';
 
 @Injectable()
 export class CVService {
+
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+  ) {}
       async uploadAndUpdate(file: Express.Multer.File, userId: string): Promise<any> {
         if (!file) {
           throw new InternalServerErrorException('No file uploaded');
@@ -14,20 +23,19 @@ export class CVService {
         }
     
         try {
-          // Update or create the CV document for the given user
-        //   const updatedCv = await this.cvModel.findOneAndUpdate(
-        //     { userId }, // filter criteria (adjust as needed)
-        //     { $set: { filePath, updatedAt: new Date() } },
-        //     { new: true, upsert: true } // upsert creates a new document if none exists
-        // );
     
-          // Update the user document with the CV reference (e.g., cvUrl)
-        //   const updatedUser = await this.userModel.findByIdAndUpdate(
-        //     userId,
-        //     { $set: { cvUrl: filePath } },
-        //     { new: true }
-        //   );
-    
+          const user = await this.userModel.findById(userId);
+          const oldPath = user.cv;
+          //Update the user document with the CV reference (e.g., cvUrl)
+          const updatedUser = await this.userModel.findByIdAndUpdate(
+            userId,
+            { $set: { cv: filePath } },
+            { new: true }
+          );
+          await unlink(oldPath).catch((error) => {
+            console.error('No old cv');
+            return { success: true, path: filePath};
+          });
           return { success: true, path: filePath};
           //return { success: true, updatedUser, updatedCv };
         } catch (error) {

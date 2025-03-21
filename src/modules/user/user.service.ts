@@ -4,12 +4,19 @@ import mongoose, { Model } from 'mongoose';
 import { User } from '../../database/schemas/user.schema';
 import { UpdateUserDto } from './dto/updateUserDTO';
 import { MyProfileDto } from './dto/MyProfileDto';
+import  {CreateUserDto}  from './dto/CreateUserDto';
 @Injectable()
 export class UserService {
   
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
+
+  // Method to create a user
+  async create(user: CreateUserDto): Promise<User> {
+    const newUser = new this.userModel(user);
+    return newUser.save();
+  }
 
   // Method to update a user by ID
   async updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<MyProfileDto> {
@@ -55,8 +62,21 @@ export class UserService {
     return updatedUser;
   }
 
-  async findById(userId: string): Promise<User | null> {
+  async findById(userId: string): Promise<User> {
       const userIdObj = new mongoose.Types.ObjectId(userId);
-      return this.userModel.findById(userIdObj).exec();
+      const user = await this.userModel.findById(userIdObj).exec();
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+      return user;
+  }
+
+  // find by email
+  async findByEmail(email: string): Promise<User> {
+    const user = this.userModel.findOne({ email:email }).exec();
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+    return user;
   }
 }

@@ -26,7 +26,7 @@ export class CVController {
     }),
   )
   uploadPdf(@UploadedFile() file: any) {
-    return this.cvService.uploadAndUpdate(file, '');
+    return this.cvService.uploadAndUpdate(file, '67dde13fffaa6c14a2f934eb');
   }
 
   
