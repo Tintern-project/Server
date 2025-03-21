@@ -2,7 +2,9 @@ import { Controller, Get, Put, Body, UseGuards, Param } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiNotFoundResponse } from '@nestjs/swagger';
 import { UpdateUserDto } from './dto/UpdateUserDto';
 import { UserService } from './user.service';
+import { AuthGuard } from 'src/Auth/guards/authentication.guard';
 
+@UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}

@@ -21,6 +21,12 @@ export class User extends Document{
   @Prop({ required: false })
   cv: string;
 
+  @Prop({ required: true, enum: ['highschool','undergrad', 'postgrad', 'phd'] })
+  educationLevel: string;  
+
+  @Prop({ required: false })
+  experience: string;
+
   @Prop({ ref: "Application" })
   applications: string[];
 
