@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export const DatabaseConfig = {
-  uri: process.env.MONGO_URI,
+  uri: 'mongodb://localhost:27017/nestdb',
   options: {
     dbName: 'Database', 
   },

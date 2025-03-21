@@ -9,6 +9,8 @@ import { CVModule } from './modules/cv/cv.module';
 import { JobModule } from './modules/job/job.module';
 import { AppConfig } from './config/app.config';
 import { DatabaseModule } from './database/database.module';
+import { CVController } from './modules/cv/cv.controller';
+import { CVService } from './modules/cv/cv.service';
 
 @Module({
   imports: [

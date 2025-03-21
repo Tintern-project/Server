@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppConfig } from './config/app.config';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 
 let cachedApp;
 
