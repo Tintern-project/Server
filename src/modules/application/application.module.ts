@@ -1,12 +1,12 @@
 import { MiddlewareConsumer,Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { Job, JobSchema } from './model/job.schema'
+import { Application, ApplicationSchema } from '../../database/schemas/application.schema'
 
 @Module({
     imports:[
         MongooseModule.forFeature([{
-            name: Job.name,
-            schema: JobSchema
+            name: Application.name,
+            schema: ApplicationSchema
         }]),
     ],
     controllers:[],
@@ -14,4 +14,4 @@ import { Job, JobSchema } from './model/job.schema'
     exports: []
 })
 
-export class JobModule {}
+export class ApplicationModule {}

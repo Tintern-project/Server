@@ -3,21 +3,23 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { ConfigModule } from "@nestjs/config";
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { ApplicationModule } from './application/application.module';
-import { CVModule } from './cv/cv.module';
-import { JobModule } from './job/job.module';
+import { UserModule } from './modules/user/user.module';
+import { ApplicationModule } from './modules/application/application.module';
+import { CVModule } from './modules/cv/cv.module';
+import { JobModule } from './modules/job/job.module';
+import { AppConfig } from './config/app.config';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    MongooseModule.forRoot(process.env.MONGO_URI),
+    DatabaseModule,
     UserModule,
     ApplicationModule,
     CVModule,
-    JobModule
+    JobModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,10 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type UserDocument = User & Document;
-
 @Schema()
-export class User  {
+export class User extends Document{
   @Prop({ required: true })
   name: string;
 
@@ -23,7 +21,7 @@ export class User  {
   @Prop({ required: false })
   cv: string;
 
-  @Prop({ ref: "Spplication" })
+  @Prop({ ref: "Application" })
   applications: string[];
 
   @Prop({ ref: "Job" })
@@ -31,8 +29,6 @@ export class User  {
 
   @Prop({ required: false, default: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'})
   profile_picture_url: string;
-
-  readonly _id?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

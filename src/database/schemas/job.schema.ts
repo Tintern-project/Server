@@ -1,10 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type JobDocument = Job & Document;
-
 @Schema({ timestamps: true })
-export class Job {
+export class Job extends Document{
   @Prop({ required: true })
   title: string;
 
@@ -31,8 +29,6 @@ export class Job {
 
   @Prop({ ref: "User" })
   savedBy: string[];
-
-  readonly _id?: string;
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
