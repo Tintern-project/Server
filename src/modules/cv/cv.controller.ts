@@ -1,14 +1,22 @@
-import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CVService } from './cv.service';
 import {diskStorage} from 'multer';
 import { join } from 'path';
+import { AuthGuard } from 'src/auth/guards/authentication.guard';
+import { authorizationGuard } from 'src/auth/guards/authorization.guard';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('upload')
 @Controller('upload')
 export class CVController {
   constructor(private readonly cvService: CVService) {}
 
   @Post('resume')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -25,8 +33,8 @@ export class CVController {
       }),
     }),
   )
-  uploadPdf(@UploadedFile() file: any) {
-    return this.cvService.uploadAndUpdate(file, '67dde13fffaa6c14a2f934eb');
+  uploadPdf(@UploadedFile() file: Express.Multer.File, @GetUser() user: any) {
+    return this.cvService.uploadAndUpdate(file, user?.id || user?._id);
   }
 
   

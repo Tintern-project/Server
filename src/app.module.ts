@@ -11,6 +11,7 @@ import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './Auth/auth.module';
 import { CVController } from './modules/cv/cv.controller';
 import { CVService } from './modules/cv/cv.service';
+import { CVModule } from './modules/cv/cv.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CVService } from './modules/cv/cv.service';
     UserModule,
     ApplicationModule,
     JobModule,
+    CVModule
   ],
   controllers: [AppController],
   providers: [AppService],

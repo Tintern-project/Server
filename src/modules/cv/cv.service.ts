@@ -37,7 +37,6 @@ export class CVService {
             return { success: true, path: filePath};
           });
           return { success: true, path: filePath};
-          //return { success: true, updatedUser, updatedCv };
         } catch (error) {
           throw new InternalServerErrorException('Database update failed');
         }
