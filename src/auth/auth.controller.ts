@@ -12,7 +12,6 @@ export class AuthController {
     try {
       // Call the AuthService to handle registration
       const result = await this.authService.register(registerRequestDto);
-
       // Return a success response with HTTP 201 Created status
       return {
         statusCode: HttpStatus.CREATED,
@@ -38,6 +37,30 @@ export class AuthController {
           message: 'An error occurred during registration',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post('login')
+  async login(@Body() loginRequestDto : SignInDto){
+    try{
+      const { accessToken, user } = await this.authService.login(loginRequestDto);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Successful Login',
+        accessToken,
+        user
+      }
+    }
+    catch (error) {
+      if(error instanceof HttpException)
+        throw error;
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'An error occurred during login',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
