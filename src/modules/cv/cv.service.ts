@@ -23,7 +23,7 @@ export class CVService {
         }
     
         try {
-    
+          
           const user = await this.userModel.findById(userId);
           const oldPath = user.cv;
           //Update the user document with the CV reference (e.g., cvUrl)

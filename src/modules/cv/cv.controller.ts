@@ -3,10 +3,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CVService } from './cv.service';
 import {diskStorage} from 'multer';
 import { join } from 'path';
-import { AuthGuard } from 'src/auth/guards/authentication.guard';
-import { authorizationGuard } from 'src/auth/guards/authorization.guard';
-import { GetUser } from 'src/auth/decorators/get-user.decorator';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/Auth/guards/authentication.guard';
+import { authorizationGuard } from 'src/Auth/guards/authorization.guard';
+import { GetUser } from 'src/Auth/decorators/get-user.decorator';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('upload')
 @Controller('upload')
@@ -17,6 +17,20 @@ export class CVController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'PDF file upload',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'PDF file to upload',
+        },
+      },
+    },
+  })
+  
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -34,7 +48,7 @@ export class CVController {
     }),
   )
   uploadPdf(@UploadedFile() file: Express.Multer.File, @GetUser() user: any) {
-    return this.cvService.uploadAndUpdate(file, user?.id || user?._id);
+    return this.cvService.uploadAndUpdate(file, user?.userId || user?._userId);
   }
 
   
