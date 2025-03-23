@@ -7,11 +7,7 @@ import { UserController } from './user.controller'
 
 @Module({
     imports: [
-        DatabaseModule,
-        MongooseModule.forFeature([{
-            name: User.name,
-            schema: UserSchema
-        }])
+        DatabaseModule
     ],
     controllers: [UserController],
     providers: [UserService],
