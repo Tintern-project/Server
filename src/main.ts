@@ -2,7 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppConfig } from './config/app.config';
-import cookieParser from 'cookie-parser';
+import * as cookieParser from 'cookie-parser';
+import { ValidationPipe } from '@nestjs/common';
 
 let cachedApp;
 
@@ -18,6 +19,7 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix(AppConfig.apiPrefix);
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   const config = new DocumentBuilder()
     .setTitle('API Documentation')

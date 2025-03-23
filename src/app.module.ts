@@ -5,10 +5,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { ApplicationModule } from './modules/application/application.module';
-import { CVModule } from './modules/cv/cv.module';
 import { JobModule } from './modules/job/job.module';
 import { AppConfig } from './config/app.config';
 import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './Auth/auth.module';
 import { CVController } from './modules/cv/cv.controller';
 import { CVService } from './modules/cv/cv.service';
 
@@ -18,9 +18,9 @@ import { CVService } from './modules/cv/cv.service';
       isGlobal: true,
     }),
     DatabaseModule,
+    AuthModule,
     UserModule,
     ApplicationModule,
-    CVModule,
     JobModule,
   ],
   controllers: [AppController],

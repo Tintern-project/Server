@@ -13,9 +13,6 @@ export class Application extends Document{
   @Prop({ enum: ["submitted", "under review", "accepted", "rejected"], default: "submitted" })
   status: string;
 
-  @Prop({ required: true, ref: "cv" })
-  cv : string;
-
   @Prop()
   atsScore: number;
 }
