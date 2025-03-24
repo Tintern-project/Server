@@ -13,7 +13,7 @@ async function bootstrap() {
   app.use(cookieParser());
   
   app.enableCors({
-    origin: 'http://localhost:3000',//change to client port
+    origin: 'http://localhost:3001',//change to client port
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -34,6 +34,8 @@ async function bootstrap() {
   await app.init();
   await app.listen(process.env.PORT ?? 3000);
   cachedApp = app;
+  console.log(`Application is running on: http://localhost:${process.env.PORT}`);
+  console.log(`access the API documentaion : http://localhost:${process.env.PORT}/api/v1/docs`);
 }
 
 bootstrap();
