@@ -1,8 +1,11 @@
-import { Controller, Get, Put, Body, UseGuards, Param } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiNotFoundResponse } from '@nestjs/swagger';
+import { Controller, Get, Put, Body, UseGuards, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiNotFoundResponse, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { UpdateUserDto } from './dto/UpdateUserDto';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/Auth/guards/authentication.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { GetUser } from 'src/Auth/decorators/get-user.decorator';
+import {diskStorage} from 'multer';
 
 @UseGuards(AuthGuard)
 @Controller('users')
@@ -26,4 +29,44 @@ export class UserController {
   async getMyProfile(@Param('userId') userId: string) {
     return await this.userService.getMyProfile(userId);
   }
+
+  @Post('resume')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'PDF file upload',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'PDF file to upload',
+        },
+      },
+    },
+  })
+  
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          // Using process.cwd() ensures the folder is relative to where the app is started.
+          const uploadPath = 'uploads';
+          cb(null, uploadPath);
+        },
+        filename: (req, file, cb) => {
+          // Create a unique filename using a timestamp
+          const filename = `${Date.now()}-${file.originalname}`;
+          cb(null, filename);
+        },
+      }),
+    }),
+  )
+  uploadPdf(@UploadedFile() file: Express.Multer.File, @GetUser() user: any) {
+    return this.userService.uploadAndUpdate(file, user?.userId || user?._userId);
+  }
+
 }
+

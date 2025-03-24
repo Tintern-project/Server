@@ -4,7 +4,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppConfig } from './config/app.config';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
-
+import * as fs from 'fs';
+import * as path from 'path';
 let cachedApp;
 
 async function bootstrap() {
@@ -30,6 +31,11 @@ async function bootstrap() {
     
     const documentFactory = () => SwaggerModule.createDocument(app, config);
     SwaggerModule.setup(`${AppConfig.apiPrefix}/docs`, app, documentFactory);
+
+    const dir = path.resolve(__dirname, '../uploads');
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir);
+        }
 
   await app.init();
   await app.listen(process.env.PORT ?? 3000);
