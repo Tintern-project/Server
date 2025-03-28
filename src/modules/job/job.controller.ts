@@ -25,4 +25,13 @@ export class JobController {
   async getSavedJobs(@GetUser() user: any) {
     return this.jobService.getSavedJobs(user?.userId || user?._userId);
   }
+
+  // Method to get all jobs
+  @Get()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all jobs' })
+  @ApiResponse({ status: 200, description: 'Successfully retrieved all jobs' })
+  async getAllJobs() {
+    return this.jobService.getAllJobs();
+  } 
 } 

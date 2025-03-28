@@ -28,4 +28,8 @@ export class JobService {
   async getSavedJobs(userId: string) {
     return this.jobModel.find({ savedBy: userId });
   }
+
+  async getAllJobs() {
+    return await this.jobModel.find().select('title company location role industry');
+  }  
 } 

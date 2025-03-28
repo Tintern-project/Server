@@ -12,6 +12,9 @@ export class Job extends Document{
   @Prop({ required: true })
   location: string;
 
+  @Prop({ required: true })
+  role: string;
+
   @Prop()
   industry: string;
 
