@@ -27,8 +27,8 @@ export class Job extends Document{
   @Prop({ type: Date, required: true })
   applicationDeadline: Date;
 
-  @Prop({ ref: "User" })
-  applicants: string[];
+  @Prop({ required: true })
+  applicationLink: string;
 
   @Prop({ ref: "User" })
   savedBy: string[];
