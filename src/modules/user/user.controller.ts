@@ -7,6 +7,14 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { GetUser } from 'src/Auth/decorators/get-user.decorator';
 import {diskStorage} from 'multer';
 
+
+enum EDUCATION_LEVELS {
+  Highscool = 'highschool',
+  Undergrad = 'undergrad',
+  Postgrad = 'postgrad',
+  PHD = 'phd'
+}
+
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
@@ -68,5 +76,32 @@ export class UserController {
     return this.userService.uploadAndUpdate(file, user?.userId || user?._userId);
   }
 
+  @Post('experience')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiBody({ schema: { type: 'object', properties: { experience: { type: 'string' } } } })
+  addExperience(@GetUser() user: any, @Body('experience') experience : string){
+    return this.userService.addExperience(user.userId, experience);
+  }
+
+  @Post('education')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['education'],
+      properties: {
+        education: {
+          type: 'string',
+          enum: Object.values(EDUCATION_LEVELS),
+          example: 'undergrad',
+        },
+      },
+    },
+  })
+  changeEducation(@GetUser() user: any, @Body('education') education: string){
+    return this.userService.changeEducationLevel(user.userId, education);
+  }
 }
 

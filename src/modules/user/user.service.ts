@@ -112,4 +112,40 @@ export class UserService {
       throw new InternalServerErrorException('Database update failed');
     }
   }
+
+  async addExperience(userId: string, experience: string) {
+
+    try{
+
+      const user = await this.userModel.findById(userId);
+
+      user.experience = experience;
+
+      await user.save();
+
+      return {success: true, message: "Experience added successfully"};
+
+    }catch(error){
+
+      throw new InternalServerErrorException('Experience failed to update, please try again!');
+    }
+  }
+
+  async changeEducationLevel(userId: string, newEducationLevel: string){
+
+    try{
+
+      const user = await this.userModel.findById(userId);
+
+      user.educationLevel = newEducationLevel;
+
+      await user.save();
+
+      return {success: true, message: "Education added successfully"};
+
+    }catch(error){
+
+      throw new InternalServerErrorException('Education failed to update, please try again!', 'Education level must be : highschool, undergrad, postgrad, or phd.');
+    }
+  }
 }
