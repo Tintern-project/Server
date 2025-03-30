@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiOperation, ApiResponse, ApiNotFoundResponse } from '@
 import { JobService } from './job.service';
 import { AuthGuard } from 'src/Auth/guards/authentication.guard';
 import { GetUser } from 'src/Auth/decorators/get-user.decorator';
+import { FilterCriteriaDto } from './dto/filterCriteriaDto';
 
 @UseGuards(AuthGuard)
 @Controller('jobs')
@@ -24,6 +25,24 @@ export class JobController {
   @ApiResponse({ status: 200, description: 'Successfully retrieved saved jobs' })
   async getSavedJobs(@GetUser() user: any) {
     return this.jobService.getSavedJobs(user?.userId || user?._userId);
+  }
+
+  // Method to get unique job filters
+  @Get('unique-filters')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get unique job filters' })
+  @ApiResponse({ status: 200, description: 'Successfully retrieved unique job filters' })
+  async getUniqueIndustries() {
+    return this.jobService.getAllFilters();
+  }
+
+  // Method to filter jobs
+  @Post('filter')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Filter jobs' })
+  @ApiResponse({ status: 200, description: 'Successfully filtered jobs' })
+  async filterJobs(@Body() filterCriteria: FilterCriteriaDto) {
+    return this.jobService.filterJobs(filterCriteria);
   }
 
   // Method to get all jobs
