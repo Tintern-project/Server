@@ -6,6 +6,9 @@ import { AuthGuard } from 'src/Auth/guards/authentication.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GetUser } from 'src/Auth/decorators/get-user.decorator';
 import {diskStorage} from 'multer';
+import { Education, Experience } from 'src/database/schemas/user.schema';
+import { AddExperienceDto } from './dto/AddExperienceDto';
+import { AddEducationDto } from './dto/AddEducationDto';
 
 
 enum EDUCATION_LEVELS {
@@ -79,29 +82,19 @@ export class UserController {
   @Post('experience')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiBody({ schema: { type: 'object', properties: { experience: { type: 'string' } } } })
-  addExperience(@GetUser() user: any, @Body('experience') experience : string){
-    return this.userService.addExperience(user.userId, experience);
+  @ApiOperation({ summary: 'Add an experience to a user if it does not already exist' })
+  @ApiBody({ type: AddExperienceDto })
+  addExperience(@GetUser() user: any, @Body('experience') addExperienceDto : AddExperienceDto){
+    return this.userService.addExperience(user.userId, addExperienceDto as any);
   }
 
   @Post('education')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiBody({
-    schema: {
-      type: 'object',
-      required: ['education'],
-      properties: {
-        education: {
-          type: 'string',
-          enum: Object.values(EDUCATION_LEVELS),
-          example: 'undergrad',
-        },
-      },
-    },
-  })
-  changeEducation(@GetUser() user: any, @Body('education') education: string){
-    return this.userService.changeEducationLevel(user.userId, education);
+  @ApiOperation({ summary: 'Add an education record to a user if it does not already exist' })
+  @ApiBody({ type: AddEducationDto })
+  changeEducation(@GetUser() user: any, @Body('education') addEducationDto: AddEducationDto){
+    return this.userService.changeEducation(user.userId, addEducationDto as any);
   }
 }
 
