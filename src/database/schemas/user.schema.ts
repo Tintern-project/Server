@@ -1,6 +1,45 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IsNumber, IsString } from 'class-validator';
 import { Document } from 'mongoose';
 
+export class Experience{
+
+  @IsString()
+  @Prop({required: true})
+  jobTitle: string;
+
+  @IsString()
+  @Prop({required: true})
+  company: string;
+
+  @IsString()
+  @Prop({required: true, unique: true})
+  smallDescription: string;
+
+  @IsNumber()
+  @Prop({required: true})
+  duration: Number;
+
+}
+
+export class Education{
+
+  @Prop({required: true, enum: ['highschool','undergrad', 'postgrad', 'phd'] })
+  @IsString()
+  educationLevel: string;
+
+  @Prop({required: true, unique: true})
+  @IsString()
+  degree: string;
+
+  @Prop({required: true})
+  @IsString()
+  university: string;
+
+  @IsNumber()
+  @Prop()
+  duration: Number;
+}
 @Schema()
 export class User extends Document{
   @Prop({ required: true })
@@ -21,11 +60,11 @@ export class User extends Document{
   @Prop({ required: false })
   cv: string;
 
-  @Prop({ required: true, enum: ['highschool','undergrad', 'postgrad', 'phd'] })
-  educationLevel: string;  
+  @Prop({ required: true})
+  education: Education[];  
 
   @Prop({ required: false })
-  experience: string;
+  experience: Experience[];
 
   @Prop({ ref: "Application" })
   applications: string[];

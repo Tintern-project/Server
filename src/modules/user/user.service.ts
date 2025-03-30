@@ -1,11 +1,13 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import { User } from '../../database/schemas/user.schema';
+import { Education, Experience, User } from '../../database/schemas/user.schema';
 import { UpdateUserDto } from './dto/updateUserDTO';
 import { MyProfileDto } from './dto/MyProfileDto';
 import { CreateUserDto } from './dto/CreateUserDto';
 import { unlink } from 'fs/promises';
+import { EducationDto } from './dto/EducationDto';
+import { ExperienceDto } from './dto/ExperienceDto';
 
 @Injectable()
 export class UserService {
@@ -110,6 +112,41 @@ export class UserService {
       return { success: true, path: filePath};
     } catch (error) {
       throw new InternalServerErrorException('Database update failed');
+    }
+  }
+
+  async addExperience(userId: string, newExperience: ExperienceDto) {
+
+    try{
+      
+      const experienceObj = {
+        jobTitle: newExperience.jobTitle,
+        company: newExperience.company,
+        smallDescription: newExperience.smallDescription,
+        duration: newExperience.duration,
+      };
+
+      await this.userModel.findByIdAndUpdate(userId, {$addToSet: {experience: experienceObj}}, {new: true});
+
+      return {success: true, message: "Experience added successfully"};
+
+    }catch(error){
+
+      throw new InternalServerErrorException('Experience failed to update, please try again!');
+    }
+  }
+
+  async changeEducation(userId: string, newEducation: EducationDto){
+
+    try{
+
+      await this.userModel.findByIdAndUpdate(userId, {$addToSet: {education: newEducation as unknown as Education}}, {new: true});
+
+      return {success: true, message: "Education added successfully"};
+
+    }catch(error){
+
+      throw new InternalServerErrorException('Education failed to update, please try again!', 'Education level must be : highschool, undergrad, postgrad, or phd.');
     }
   }
 }
