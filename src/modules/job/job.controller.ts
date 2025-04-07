@@ -1,5 +1,5 @@
-import { Controller, Post, Get, UseGuards, Param, Body } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiNotFoundResponse } from '@nestjs/swagger';
+import { Controller, Post, Get, UseGuards, Param, Body, Patch, Delete } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiNotFoundResponse, ApiBadRequestResponse } from '@nestjs/swagger';
 import { JobService } from './job.service';
 import { AuthGuard } from 'src/Auth/guards/authentication.guard';
 import { GetUser } from 'src/Auth/decorators/get-user.decorator';
@@ -17,6 +17,16 @@ export class JobController {
   @ApiNotFoundResponse({ description: 'Job not found' })
   async saveJob(@Param('jobId') jobId: string, @GetUser() user: any) {
     return this.jobService.saveJob(jobId, user?.userId || user?._userId);
+  }
+
+  @Delete('save/delete/:jobId')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Remove a job from the saved jobs list' })
+  @ApiResponse({ status:200, description: 'Job has been successfully removed' })
+  @ApiNotFoundResponse({ description: 'Job not found' })
+  @ApiBadRequestResponse({ description: 'Job is not saved by this user ' })
+  async removeSavedJob(@Param('jobId') id: string, @GetUser() user: any){
+    return this.jobService.removeSavedJob(id, user?.userId);
   }
 
   @Get('saved')
@@ -53,4 +63,14 @@ export class JobController {
   async getAllJobs() {
     return this.jobService.getAllJobs();
   } 
+
+
+  @Get(':jobId')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get a job by its id'})
+  @ApiResponse({ status: 200, description: 'Successfully retrieved job' })
+  async getJobById(@Param('jobId') id : string){
+    return this.jobService.getJobById(id);
+  }
+
 } 
