@@ -149,4 +149,89 @@ export class UserService {
       throw new InternalServerErrorException('Education failed to update, please try again!', 'Education level must be : highschool, undergrad, postgrad, or phd.');
     }
   }
+
+  async deleteExperience(userId: string, experience: ExperienceDto){
+    
+    try {
+
+      await this.userModel.findByIdAndUpdate(userId, {$pull: {experience: experience as unknown as Experience}}, {new: true});
+
+      return {success: true, message: "Education deleted successfully"};
+
+    }catch(error){
+
+      throw new InternalServerErrorException('Education failed to delete, please try again!')
+    }
+  }
+
+  async deleteEducation(userId: string, education: EducationDto){
+    
+    try {
+
+      await this.userModel.findByIdAndUpdate(userId, {$pull: {education: education as unknown as Education}}, {new: true});
+
+      return {success: true, message: "Education deleted successfully"};
+
+    }catch(error){
+
+      throw new InternalServerErrorException('Education failed to delete, please try again!')
+    }
+  }
+
+  async editExperience(userId: string, oldExperience: ExperienceDto, newExperience: ExperienceDto){
+
+    try {
+
+      const pullResult = await this.userModel.findByIdAndUpdate(
+        userId,
+        { $pull: { experience: oldExperience as unknown as Experience} },
+        { new: true }
+      ).exec();
+    
+      if (!pullResult) {
+        throw new NotFoundException('User or experience not found during removal');
+      }
+    
+      
+      await this.userModel.findByIdAndUpdate(
+        userId,
+        { $addToSet: { experience: newExperience as unknown as Experience}},
+        { new: true }
+      ).exec();
+
+      return {success: true, message: "Experience Edited successfully"};
+
+    }catch(error){
+
+      throw new InternalServerErrorException('Experience failed to update, please try again!')
+    }
+  }
+
+  async editEducation(userId: string, oldEducation: EducationDto, newEducation: EducationDto){
+
+    try {
+
+      const pullResult = await this.userModel.findByIdAndUpdate(
+        userId,
+        { $pull: { education: oldEducation as unknown as Education} },
+        { new: true }
+      ).exec();
+    
+      if (!pullResult) {
+        throw new NotFoundException('User or education not found during removal');
+      }
+    
+      await this.userModel.findByIdAndUpdate(
+        userId,
+        { $addToSet: { education: newEducation as unknown as Education} },
+        { new: true }
+      ).exec();
+
+      return {success: true, message: "Education Edited successfully"};
+
+    }catch(error){
+
+      throw new InternalServerErrorException('Education failed to update, please try again!')
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Body, UseGuards, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Put, Body, UseGuards, Post, UploadedFile, UseInterceptors, Delete } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiNotFoundResponse, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { UpdateUserDto } from './dto/UpdateUserDto';
 import { UserService } from './user.service';
@@ -6,17 +6,10 @@ import { AuthGuard } from 'src/Auth/guards/authentication.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GetUser } from 'src/Auth/decorators/get-user.decorator';
 import {diskStorage} from 'multer';
-import { Education, Experience } from 'src/database/schemas/user.schema';
-import { AddExperienceDto } from './dto/AddExperienceDto';
-import { AddEducationDto } from './dto/AddEducationDto';
-
-
-enum EDUCATION_LEVELS {
-  Highscool = 'highschool',
-  Undergrad = 'undergrad',
-  Postgrad = 'postgrad',
-  PHD = 'phd'
-}
+import { ExperienceDto } from './dto/ExperienceDto';
+import { EducationDto } from './dto/EducationDto';
+import { ReplaceExperienceDto } from './dto/ReplaceExperienceDto';
+import { ReplaceEducationDto } from './dto/ReplaceEducationDto';
 
 @UseGuards(AuthGuard)
 @Controller('users')
@@ -80,21 +73,53 @@ export class UserController {
   }
 
   @Post('experience')
-  @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Add an experience to a user if it does not already exist' })
-  @ApiBody({ type: AddExperienceDto })
-  addExperience(@GetUser() user: any, @Body('experience') addExperienceDto : AddExperienceDto){
-    return this.userService.addExperience(user.userId, addExperienceDto as any);
+  @ApiBody({ type: ExperienceDto })
+  addExperience(@GetUser() user: any, @Body() experienceDto : ExperienceDto){
+    return this.userService.addExperience(user.userId, experienceDto as any);
   }
 
   @Post('education')
-  @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Add an education record to a user if it does not already exist' })
-  @ApiBody({ type: AddEducationDto })
-  changeEducation(@GetUser() user: any, @Body('education') addEducationDto: AddEducationDto){
-    return this.userService.changeEducation(user.userId, addEducationDto as any);
+  @ApiBody({ type: EducationDto })
+  changeEducation(@GetUser() user: any, @Body() educationDto: EducationDto){
+    return this.userService.changeEducation(user.userId, educationDto as any);
+  }
+
+  @Delete('experience')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'delete an experience of a user if it exists' })
+  @ApiBody({ type: ExperienceDto })
+  deleteExperience(@GetUser() user: any, @Body() experienceDto: ExperienceDto){
+    return this.userService.deleteExperience(user.userId, experienceDto as any);
+  }
+
+  @Delete('education')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'delete an education of a user if it exists' })
+  @ApiBody({ type: EducationDto })
+  deleteEducation(@GetUser() user: any, @Body() educationDto: EducationDto){
+    return this.userService.deleteEducation(user.userId, educationDto as any);
+  }
+
+  @Put('experience')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Edit an experience of a user if it exists' })
+  @ApiBody({ type: ReplaceExperienceDto })
+  editExperience(@GetUser() user: any, @Body() replaceExperienceDto: ReplaceExperienceDto){
+
+    return this.userService.editExperience(user.userId, replaceExperienceDto.oldExperience, replaceExperienceDto.newExperience);
+  }
+
+  @Put('education')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Edit an education of a user if it exists' })
+  @ApiBody({ type: ReplaceEducationDto })
+  editEducation(@GetUser() user: any, @Body() replaceEducationDto: ReplaceEducationDto){
+
+    return this.userService.editEducation(user.userId, replaceEducationDto.oldEducation, replaceEducationDto.newEducation);
   }
 }
 

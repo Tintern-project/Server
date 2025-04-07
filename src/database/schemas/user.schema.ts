@@ -13,7 +13,7 @@ export class Experience{
   company: string;
 
   @IsString()
-  @Prop({required: true, unique: true})
+  @Prop({required: true})
   smallDescription: string;
 
   @IsNumber()
@@ -28,7 +28,7 @@ export class Education{
   @IsString()
   educationLevel: string;
 
-  @Prop({required: true, unique: true})
+  @Prop({required: true})
   @IsString()
   degree: string;
 
