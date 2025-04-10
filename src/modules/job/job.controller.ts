@@ -4,6 +4,8 @@ import { JobService } from './job.service';
 import { AuthGuard } from 'src/Auth/guards/authentication.guard';
 import { GetUser } from 'src/Auth/decorators/get-user.decorator';
 import { FilterCriteriaDto } from './dto/filterCriteriaDto';
+import { IS_PUBLIC_KEY, Public } from 'src/Auth/decorators/public.decorator';
+import { Role, Roles } from 'src/Auth/decorators/roles.decorator';
 
 @UseGuards(AuthGuard)
 @Controller('jobs')
@@ -29,6 +31,7 @@ export class JobController {
 
   // Method to get unique job filters
   @Get('unique-filters')
+  @Public()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get unique job filters' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved unique job filters' })
@@ -38,6 +41,7 @@ export class JobController {
 
   // Method to filter jobs
   @Post('filter')
+  @Public()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Filter jobs' })
   @ApiResponse({ status: 200, description: 'Successfully filtered jobs' })
@@ -47,6 +51,7 @@ export class JobController {
 
   // Method to get all jobs
   @Get()
+  @Public()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all jobs' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved all jobs' })
