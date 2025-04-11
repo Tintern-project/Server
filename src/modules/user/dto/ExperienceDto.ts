@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsString, IsNumber, Matches } from 'class-validator';
 
 export class ExperienceDto {
   @ApiProperty({
@@ -29,4 +30,25 @@ export class ExperienceDto {
   })
   @IsNumber()
   duration: number;
+
+   @ApiProperty({
+      description: 'Start date of the Experience',
+      example: '2004-01-01'
+    })
+    @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+      message: 'Date must be in the format YYYY-MM-DD',
+    })
+    @Transform(({ value }) => new Date(value))
+    startDate: Date;
+
+
+    @ApiProperty({
+      description: 'End date of the Experience',
+      example: '2004-01-01'
+    })
+    @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+      message: 'Date must be in the format YYYY-MM-DD',
+    })
+    @Transform(({ value }) => new Date(value))
+    endDate: Date;
 }

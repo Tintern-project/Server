@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsNumber, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsString } from 'class-validator';
 import { Document } from 'mongoose';
 
 export class Experience{
@@ -20,6 +20,13 @@ export class Experience{
   @Prop({required: true})
   duration: Number;
 
+  @IsDate()
+  @Prop()
+  startDate: Date;
+
+  @IsDate()
+  @Prop()
+  endDate: Date;
 }
 
 export class Education{
@@ -39,6 +46,14 @@ export class Education{
   @IsNumber()
   @Prop()
   duration: Number;
+
+  @IsDate()
+  @Prop()
+  startDate: Date;
+
+  @IsDate()
+  @Prop()
+  endDate: Date;
 }
 @Schema()
 export class User extends Document{
