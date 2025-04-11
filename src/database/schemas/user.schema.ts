@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsNumber, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsString } from 'class-validator';
 import { Document } from 'mongoose';
 
 export class Experience{
@@ -20,6 +20,33 @@ export class Experience{
   @Prop({required: true})
   duration: Number;
 
+  @IsString()
+  @Prop(
+    {
+    required: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{4}-\d{2}-\d{2}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid date format! Required: YYYY-MM-DD`
+    }
+   }
+  )
+  startDate: string;
+
+  @IsString()
+  @Prop(
+    {
+      required: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{4}-\d{2}-\d{2}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid date format! Required: YYYY-MM-DD`
+    }
+   }
+  )
+  endDate: string;
 }
 
 export class Education{
@@ -39,6 +66,34 @@ export class Education{
   @IsNumber()
   @Prop()
   duration: Number;
+
+  @IsString()
+  @Prop(
+    {
+      required: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{4}-\d{2}-\d{2}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid date format! Required: YYYY-MM-DD`
+    }
+   }
+  )
+  startDate: string;
+
+  @IsString()
+  @Prop(
+    {
+      required: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{4}-\d{2}-\d{2}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid date format! Required: YYYY-MM-DD`
+    }
+   }
+  )
+  endDate: string;
 }
 @Schema()
 export class User extends Document{
