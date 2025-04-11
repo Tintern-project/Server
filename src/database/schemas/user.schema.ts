@@ -20,13 +20,33 @@ export class Experience{
   @Prop({required: true})
   duration: Number;
 
-  @IsDate()
-  @Prop()
-  startDate: Date;
+  @IsString()
+  @Prop(
+    {
+    required: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{4}-\d{2}-\d{2}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid date format! Required: YYYY-MM-DD`
+    }
+   }
+  )
+  startDate: string;
 
-  @IsDate()
-  @Prop()
-  endDate: Date;
+  @IsString()
+  @Prop(
+    {
+      required: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{4}-\d{2}-\d{2}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid date format! Required: YYYY-MM-DD`
+    }
+   }
+  )
+  endDate: string;
 }
 
 export class Education{
@@ -47,13 +67,33 @@ export class Education{
   @Prop()
   duration: Number;
 
-  @IsDate()
-  @Prop()
-  startDate: Date;
+  @IsString()
+  @Prop(
+    {
+      required: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{4}-\d{2}-\d{2}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid date format! Required: YYYY-MM-DD`
+    }
+   }
+  )
+  startDate: string;
 
-  @IsDate()
-  @Prop()
-  endDate: Date;
+  @IsString()
+  @Prop(
+    {
+      required: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{4}-\d{2}-\d{2}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid date format! Required: YYYY-MM-DD`
+    }
+   }
+  )
+  endDate: string;
 }
 @Schema()
 export class User extends Document{

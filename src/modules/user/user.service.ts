@@ -118,15 +118,8 @@ export class UserService {
   async addExperience(userId: string, newExperience: ExperienceDto) {
 
     try{
-      
-      const experienceObj = {
-        jobTitle: newExperience.jobTitle,
-        company: newExperience.company,
-        smallDescription: newExperience.smallDescription,
-        duration: newExperience.duration,
-      };
 
-      await this.userModel.findByIdAndUpdate(userId, {$addToSet: {experience: experienceObj}}, {new: true});
+      await this.userModel.findByIdAndUpdate(userId, {$addToSet: {experience: newExperience as unknown as Experience}}, {new: true});
 
       return {success: true, message: "Experience added successfully"};
 
