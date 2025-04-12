@@ -10,10 +10,16 @@ export class Job extends Document{
   company: string;
 
   @Prop({ required: true })
-  location: string;
+  country: string;
 
   @Prop({ required: true })
+  city: string;
+
+  @Prop({ required: true, enum: ["Full-time", "Part-time", "Intern", "Volunteer"] })
   role: string;
+
+  @Prop({ required: true, enum: ["On-site", "Remote", "Hybrid"] })
+  type: string;
 
   @Prop()
   industry: string;

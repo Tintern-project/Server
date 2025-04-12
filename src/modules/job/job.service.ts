@@ -31,11 +31,11 @@ export class JobService {
   }
 
   async getAllJobs() {
-    return await this.jobModel.find().select('title company location role industry');
+    return await this.jobModel.find().select('title company country city role industry type');
   }  
 
   async filterJobs(filterCriteria: FilterCriteriaDto) {
-    const { keyword, location, role, industry } = filterCriteria;
+    const { keyword, country, city, role, industry, type } = filterCriteria;
     const query = {};
 
     if (keyword && keyword.trim() !== '') {
@@ -45,8 +45,12 @@ export class JobService {
       ];
     }
 
-    if (location && location.trim() !== '') {
-      query['location'] = new RegExp(location, 'i');
+    if (country && country.trim() !== '') {
+      query['country'] = new RegExp(country, 'i');
+    }
+
+    if (city && city.trim() !== '') {
+      query['city'] = new RegExp(city, 'i');
     }
 
     if (role && role.trim() !== '') {
@@ -57,14 +61,19 @@ export class JobService {
       query['industry'] = new RegExp(industry, 'i');
     }
 
-    return await this.jobModel.find(query).select('title company location role industry');
+
+    if (type && type.trim() !== '') {
+      query['type'] = new RegExp(type, 'i');
+    }
+
+    return await this.jobModel.find(query).select('title company country city role industry type');
   }
 
   // Method to return all filters
   async getAllFilters() {
     const industries = await this.jobModel.distinct('industry');
-    const roles = await this.jobModel.distinct('role');
-    const locations = await this.jobModel.distinct('location');
-    return { industries, roles, locations };
+    const countries = await this.jobModel.distinct('country');
+    const cities = await this.jobModel.distinct('city');
+    return { industries, countries, cities};
   }
 } 

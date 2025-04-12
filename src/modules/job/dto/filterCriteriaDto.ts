@@ -7,12 +7,17 @@ export class FilterCriteriaDto {
   @IsOptional()
   keyword: string;
 
-  @ApiProperty({ description: 'Location of the job', example: 'New York' })
+  @ApiProperty({ description: 'Country of the job', example: 'Egypt' })
   @IsString()
   @IsOptional()
-  location: string;
+  country: string;
 
-  @ApiProperty({ description: 'Role of the job', example: 'Full Stack Developer' })
+  @ApiProperty({ description: 'City of the job', example: 'Cairo' })
+  @IsString()
+  @IsOptional()
+  city: string;
+
+  @ApiProperty({ description: 'Role of the job', example: 'Full-time' })
   @IsString()
   @IsOptional()
   role: string;
@@ -21,4 +26,9 @@ export class FilterCriteriaDto {
   @IsString()
   @IsOptional()
   industry: string;
+
+  @ApiProperty({ description: 'Type of the job', example: 'On-site' })
+  @IsString()
+  @IsOptional()
+  type: string;
 }
