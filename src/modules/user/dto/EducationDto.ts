@@ -26,13 +26,6 @@ export class EducationDto {
   university: string;
 
   @ApiProperty({
-    description: 'Duration of the education (e.g., in years)',
-    example: 4,
-  })
-  @IsNumber()
-  duration: number;
-
-  @ApiProperty({
     description: 'Start date of the Education',
     example: '2004-01-01'
   })

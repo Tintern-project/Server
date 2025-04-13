@@ -24,13 +24,6 @@ export class ExperienceDto {
   @IsString()
   description: string;
 
-  @ApiProperty({
-    description: 'Duration of the experience in months',
-    example: 24,
-  })
-  @IsNumber()
-  duration: number;
-
    @ApiProperty({
       description: 'Start date of the Experience',
       example: '2004-01-01'

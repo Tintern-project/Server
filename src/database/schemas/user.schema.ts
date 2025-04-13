@@ -16,10 +16,6 @@ export class Experience{
   @Prop({required: true})
   description: string;
 
-  @IsNumber()
-  @Prop({required: true})
-  duration: Number;
-
   @IsString()
   @Prop(
     {
@@ -62,10 +58,6 @@ export class Education{
   @Prop({required: true})
   @IsString()
   university: string;
-
-  @IsNumber()
-  @Prop()
-  duration: Number;
 
   @IsString()
   @Prop(
