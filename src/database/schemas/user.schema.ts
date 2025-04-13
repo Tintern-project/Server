@@ -14,7 +14,7 @@ export class Experience{
 
   @IsString()
   @Prop({required: true})
-  smallDescription: string;
+  description: string;
 
   @IsNumber()
   @Prop({required: true})

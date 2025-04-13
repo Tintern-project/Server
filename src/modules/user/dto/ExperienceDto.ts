@@ -22,7 +22,7 @@ export class ExperienceDto {
     example: 'Developed scalable backend services',
   })
   @IsString()
-  smallDescription: string;
+  description: string;
 
   @ApiProperty({
     description: 'Duration of the experience in months',

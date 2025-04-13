@@ -227,4 +227,24 @@ export class UserService {
       throw new InternalServerErrorException('Education failed to update, please try again!')
     }
   }
+
+  async getExperience(userId: string): Promise<Experience[]> {
+    const user = await this.userModel.findById(userId).exec();
+    
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    
+    return user.experience;
+  }
+
+  async getEducation(userId: string): Promise<Education[]> {
+    const user = await this.userModel.findById(userId).exec();
+    
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    
+    return user.education;
+  }
 }

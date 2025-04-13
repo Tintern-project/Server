@@ -72,6 +72,24 @@ export class UserController {
     return this.userService.uploadAndUpdate(file, user?.userId || user?._userId);
   }
 
+  @Get('experience')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get the experience of the user' })
+  @ApiResponse({ status: 200, description: 'The experience has been successfully retrieved' })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  async getExperience(@GetUser() user: any) {
+    return await this.userService.getExperience(user?.userId || user?._userId);
+  }
+
+  @Get('education')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get the education of the user' })
+  @ApiResponse({ status: 200, description: 'The education has been successfully retrieved' })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  async getEducation(@GetUser() user: any) {
+    return await this.userService.getEducation(user?.userId || user?._userId);
+  }
+
   @Post('experience')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Add an experience to a user if it does not already exist' })
