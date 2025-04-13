@@ -26,9 +26,4 @@ export class CreateUserDto {
     })
     @IsString()
     educationLevel: string;
-  
-    @ApiProperty({ description: 'Professional experience of the user', example: '3 years in software development' })
-    @IsString()
-    @IsOptional()
-    experience: string;
 }
