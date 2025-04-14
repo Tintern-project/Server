@@ -1,28 +1,39 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, Matches } from 'class-validator';
+import { IsString, IsNumber, Matches, IsOptional } from 'class-validator';
 
-export class EducationDto {
+export class updateEducationDto {
   @ApiProperty({
     description: 'Education level',
     enum: ['highschool', 'undergrad', 'postgrad', 'phd'],
     example: 'undergrad',
   })
   @IsString()
-  educationLevel: string;
+  @IsOptional()
+  educationLevel?: string;
 
   @ApiProperty({
     description: 'Degree earned',
     example: 'BSc Computer Science',
   })
   @IsString()
-  degree: string;
+  @IsOptional()
+  degree?: string;
 
   @ApiProperty({
     description: 'Name of the university',
     example: 'MIT',
   })
   @IsString()
-  university: string;
+  @IsOptional()
+  university?: string;
+
+  @ApiProperty({
+    description: 'Duration of the education (e.g., in years)',
+    example: 4,
+  })
+  @IsNumber()
+  @IsOptional()
+  duration?: number;
 
   @ApiProperty({
     description: 'Start date of the Education',
@@ -31,7 +42,8 @@ export class EducationDto {
   @Matches(/^\d{4}-\d{2}-\d{2}$/, {
     message: 'Date must be in the format YYYY-MM-DD',
   })
-  startDate: String;
+  @IsOptional()
+  startDate?: String;
 
 
   @ApiProperty({
@@ -41,6 +53,7 @@ export class EducationDto {
   @Matches(/^\d{4}-\d{2}-\d{2}$/, {
     message: 'Date must be in the format YYYY-MM-DD',
   })
-  endDate: String;
+  @IsOptional()
+  endDate?: String;
 
 }

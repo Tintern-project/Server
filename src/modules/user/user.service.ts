@@ -8,6 +8,8 @@ import { CreateUserDto } from './dto/CreateUserDto';
 import { unlink } from 'fs/promises';
 import { EducationDto } from './dto/EducationDto';
 import { ExperienceDto } from './dto/ExperienceDto';
+import { updateExperienceDto } from './dto/updateExperienceDto';
+import { updateEducationDto } from './dto/updateEducationDto';
 
 @Injectable()
 export class UserService {
@@ -143,11 +145,25 @@ export class UserService {
     }
   }
 
-  async deleteExperience(userId: string, experience: ExperienceDto){
+  async deleteExperience(userId: string, ID: String){
     
     try {
 
-      await this.userModel.findByIdAndUpdate(userId, {$pull: {experience: experience as unknown as Experience}}, {new: true});
+      await this.userModel.findByIdAndUpdate(userId, {$pull: {experience: {_id: ID}}}, {new: true});
+
+      return {success: true, message: "Experience deleted successfully"};
+
+    }catch(error){
+
+      throw new InternalServerErrorException('Experience failed to delete, please try again!')
+    }
+  }
+
+  async deleteEducation(userId: string, ID: String){
+    
+    try {
+
+      await this.userModel.findByIdAndUpdate(userId, {$pull: {education: {_id: ID}}}, {new: true});
 
       return {success: true, message: "Education deleted successfully"};
 
@@ -157,40 +173,17 @@ export class UserService {
     }
   }
 
-  async deleteEducation(userId: string, education: EducationDto){
-    
-    try {
-
-      await this.userModel.findByIdAndUpdate(userId, {$pull: {education: education as unknown as Education}}, {new: true});
-
-      return {success: true, message: "Education deleted successfully"};
-
-    }catch(error){
-
-      throw new InternalServerErrorException('Education failed to delete, please try again!')
-    }
-  }
-
-  async editExperience(userId: string, oldExperience: ExperienceDto, newExperience: ExperienceDto){
+  async editExperience(userId: string, oldExperienceID: String, newExperience: updateExperienceDto){
 
     try {
 
-      const pullResult = await this.userModel.findByIdAndUpdate(
-        userId,
-        { $pull: { experience: oldExperience as unknown as Experience} },
-        { new: true }
-      ).exec();
-    
-      if (!pullResult) {
-        throw new NotFoundException('User or experience not found during removal');
-      }
-    
+      const user = await this.userModel.findById(userId);
+
+      const oldExperience = (user.experience as any).find(exp => exp._id.toString() === oldExperienceID);
+
+      Object.assign(oldExperience, newExperience);
       
-      await this.userModel.findByIdAndUpdate(
-        userId,
-        { $addToSet: { experience: newExperience as unknown as Experience}},
-        { new: true }
-      ).exec();
+      await user.save();
 
       return {success: true, message: "Experience Edited successfully"};
 
@@ -200,25 +193,17 @@ export class UserService {
     }
   }
 
-  async editEducation(userId: string, oldEducation: EducationDto, newEducation: EducationDto){
+  async editEducation(userId: string, oldEducationID: String, newEducation: updateEducationDto){
 
     try {
 
-      const pullResult = await this.userModel.findByIdAndUpdate(
-        userId,
-        { $pull: { education: oldEducation as unknown as Education} },
-        { new: true }
-      ).exec();
-    
-      if (!pullResult) {
-        throw new NotFoundException('User or education not found during removal');
-      }
-    
-      await this.userModel.findByIdAndUpdate(
-        userId,
-        { $addToSet: { education: newEducation as unknown as Education} },
-        { new: true }
-      ).exec();
+      const user = await this.userModel.findById(userId);
+
+      const oldEducation = (user.education as any).find(edu => edu._id.toString() === oldEducationID);
+
+      Object.assign(oldEducation, newEducation);
+      
+      await user.save();
 
       return {success: true, message: "Education Edited successfully"};
 
