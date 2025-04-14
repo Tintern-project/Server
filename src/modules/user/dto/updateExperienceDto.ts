@@ -1,34 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, Matches } from 'class-validator';
+import { IsString, IsNumber, Matches, IsOptional } from 'class-validator';
 
-export class ExperienceDto {
+export class updateExperienceDto {
   @ApiProperty({
     description: 'Job title of the experience',
     example: 'Software Engineer',
   })
   @IsString()
-  jobTitle: string;
+  @IsOptional()
+  jobTitle?: string;
 
   @ApiProperty({
     description: 'Company name',
     example: 'Google',
   })
   @IsString()
-  company: string;
+  @IsOptional()
+  company?: string;
 
   @ApiProperty({
     description: 'A short description of the role',
     example: 'Developed scalable backend services',
   })
   @IsString()
-  smallDescription: string;
+  @IsOptional()
+  smallDescription?: string;
 
   @ApiProperty({
     description: 'Duration of the experience in months',
     example: 24,
   })
   @IsNumber()
-  duration: number;
+  @IsOptional()
+  duration?: number;
 
    @ApiProperty({
       description: 'Start date of the Experience',
@@ -37,7 +41,8 @@ export class ExperienceDto {
     @Matches(/^\d{4}-\d{2}-\d{2}$/, {
       message: 'Date must be in the format YYYY-MM-DD',
     })
-    startDate: String;
+    @IsOptional()
+    startDate?: String;
 
 
     @ApiProperty({
@@ -47,5 +52,6 @@ export class ExperienceDto {
     @Matches(/^\d{4}-\d{2}-\d{2}$/, {
       message: 'Date must be in the format YYYY-MM-DD',
     })
-    endDate: String;
+    @IsOptional()
+    endDate?: String;
 }

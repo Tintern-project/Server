@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Body, UseGuards, Post, UploadedFile, UseInterceptors, Delete } from '@nestjs/common';
+import { Controller, Get, Put, Body, UseGuards, Post, UploadedFile, UseInterceptors, Delete, Param } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiNotFoundResponse, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { UpdateUserDto } from './dto/UpdateUserDto';
 import { UserService } from './user.service';
@@ -8,8 +8,8 @@ import { GetUser } from 'src/Auth/decorators/get-user.decorator';
 import {diskStorage} from 'multer';
 import { ExperienceDto } from './dto/ExperienceDto';
 import { EducationDto } from './dto/EducationDto';
-import { ReplaceExperienceDto } from './dto/ReplaceExperienceDto';
-import { ReplaceEducationDto } from './dto/ReplaceEducationDto';
+import { updateEducationDto } from './dto/updateEducationDto';
+import { updateExperienceDto } from './dto/updateExperienceDto';
 
 @UseGuards(AuthGuard)
 @Controller('users')
@@ -88,38 +88,34 @@ export class UserController {
     return this.userService.changeEducation(user.userId, educationDto as any);
   }
 
-  @Delete('experience')
+  @Delete('experience/:id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'delete an experience of a user if it exists' })
-  @ApiBody({ type: ExperienceDto })
-  deleteExperience(@GetUser() user: any, @Body() experienceDto: ExperienceDto){
-    return this.userService.deleteExperience(user.userId, experienceDto as any);
+  deleteExperience(@GetUser() user: any, @Param('id') ID: String){
+    return this.userService.deleteExperience(user.userId, ID);
   }
 
-  @Delete('education')
+  @Delete('education/:id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'delete an education of a user if it exists' })
-  @ApiBody({ type: EducationDto })
-  deleteEducation(@GetUser() user: any, @Body() educationDto: EducationDto){
-    return this.userService.deleteEducation(user.userId, educationDto as any);
+  deleteEducation(@GetUser() user: any, @Param('id') ID: String){
+    return this.userService.deleteEducation(user.userId, ID);
   }
 
-  @Put('experience')
+  @Put('experience/:id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Edit an experience of a user if it exists' })
-  @ApiBody({ type: ReplaceExperienceDto })
-  editExperience(@GetUser() user: any, @Body() replaceExperienceDto: ReplaceExperienceDto){
+  editExperience(@GetUser() user: any, @Body() newExperience: updateExperienceDto, @Param('id') ID: String){
 
-    return this.userService.editExperience(user.userId, replaceExperienceDto.oldExperience, replaceExperienceDto.newExperience);
+    return this.userService.editExperience(user.userId, ID, newExperience);
   }
 
-  @Put('education')
+  @Put('education/:id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Edit an education of a user if it exists' })
-  @ApiBody({ type: ReplaceEducationDto })
-  editEducation(@GetUser() user: any, @Body() replaceEducationDto: ReplaceEducationDto){
+  editEducation(@GetUser() user: any, @Body() newEducation: updateEducationDto, @Param('id') ID: String){
 
-    return this.userService.editEducation(user.userId, replaceEducationDto.oldEducation, replaceEducationDto.newEducation);
+    return this.userService.editEducation(user.userId, ID, newEducation);
   }
 }
 

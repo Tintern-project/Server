@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsDate, IsNumber, IsString } from 'class-validator';
 import { Document } from 'mongoose';
 
+@Schema({_id: true, id: true})
 export class Experience{
 
   @IsString()
@@ -49,6 +50,7 @@ export class Experience{
   endDate: string;
 }
 
+@Schema({_id: true, id: true})
 export class Education{
 
   @Prop({required: true, enum: ['highschool','undergrad', 'postgrad', 'phd'] })
@@ -95,6 +97,10 @@ export class Education{
   )
   endDate: string;
 }
+
+export const EducationSchema = SchemaFactory.createForClass(Education);
+export const ExperienceSchema = SchemaFactory.createForClass(Experience);
+
 @Schema()
 export class User extends Document{
   @Prop({ required: true })
@@ -115,10 +121,10 @@ export class User extends Document{
   @Prop({ required: false })
   cv: string;
 
-  @Prop({ required: true})
+  @Prop({ required: false, type: [EducationSchema], default: []})
   education: Education[];  
 
-  @Prop({ required: false })
+  @Prop({ required: false, type: [ExperienceSchema], default: []})
   experience: Experience[];
 
   @Prop({ ref: "Application" })
