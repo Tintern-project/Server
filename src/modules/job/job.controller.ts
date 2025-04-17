@@ -1,11 +1,13 @@
-import { Controller, Post, Get, UseGuards, Param, Body, Patch, Delete } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiNotFoundResponse, ApiBadRequestResponse } from '@nestjs/swagger';
+import { Controller, Post, Get, UseGuards, Param, Body, Patch, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiNotFoundResponse, ApiBadRequestResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { JobService } from './job.service';
 import { AuthGuard } from 'src/Auth/guards/authentication.guard';
 import { GetUser } from 'src/Auth/decorators/get-user.decorator';
 import { FilterCriteriaDto } from './dto/filterCriteriaDto';
 import { IS_PUBLIC_KEY, Public } from 'src/Auth/decorators/public.decorator';
 import { Role, Roles } from 'src/Auth/decorators/roles.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MatchJobDto, MatchJobResponseDto } from './dto/matchJobDto';
 
 @UseGuards(AuthGuard)
 @Controller('jobs')
@@ -76,6 +78,26 @@ export class JobController {
   @ApiResponse({ status: 200, description: 'Successfully retrieved job' })
   async getJobById(@Param('jobId') id : string){
     return this.jobService.getJobById(id);
+  }
+
+  @Post('match')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Match user CV with job description' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Successfully matched CV with job description',
+    type: MatchJobResponseDto
+  })
+  @ApiBody({
+    type: MatchJobDto,
+    description: 'Job description to match against user CV'
+  })
+  async matchJob(
+    @GetUser() user: any,
+    @Body() matchJobDto: MatchJobDto,
+  ): Promise<MatchJobResponseDto> {
+    return this.jobService.matchJob(user?.userId || user?._userId, matchJobDto.jobDescription);
   }
 
 } 
