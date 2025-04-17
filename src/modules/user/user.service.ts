@@ -37,6 +37,7 @@ export class UserService {
       email: user.email,
       phone: user.phone,
       profile_picture_url: user.profile_picture_url,
+      hasCV: user.cv ? true : false,
     };
     return myProfile;
   }
@@ -54,6 +55,7 @@ export class UserService {
         email: user.email,
         phone: user.phone,
         profile_picture_url: user.profile_picture_url,
+        hasCV: user.cv ? true : false,
     };
     return myProfile;
   }

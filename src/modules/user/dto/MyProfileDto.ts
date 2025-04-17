@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsString, IsArray, IsUrl } from 'class-validator';
+import { IsEmail, IsEnum, IsString, IsArray, IsUrl, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class MyProfileDto {
@@ -10,7 +10,6 @@ export class MyProfileDto {
     @IsEmail()
     email: string;
 
-
     @ApiProperty({ description: 'The phone number of the user', example: '+1234567890' })
     @IsString()
     phone: string;
@@ -18,4 +17,8 @@ export class MyProfileDto {
     @ApiProperty({ description: 'The URL of the user\'s profile picture', example: 'https://example.com/profile.jpg' })
     @IsUrl()
     profile_picture_url: string;
+
+    @ApiProperty({ description: 'Whether the user has uploaded a CV', example: true })
+    @IsBoolean()
+    hasCV: boolean;
 }

@@ -5,10 +5,7 @@ import { JobService } from './job.service'
 import { UserModule } from '../user/user.module'
 
 @Module({
-    imports:[
-        DatabaseModule,
-        UserModule,
-    ],
+    imports:[DatabaseModule],
     controllers:[JobController],
     providers:[JobService],
     exports: [JobService]

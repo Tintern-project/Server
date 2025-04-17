@@ -6,13 +6,16 @@ import { FilterCriteriaDto } from './dto/filterCriteriaDto';
 import deepseek from '../../config/deepseek.config'; // Adjust the import path as necessary
 import * as pdfParse from 'pdf-parse';
 import * as fs from 'fs';
-import { UserService } from '../user/user.service';
+import axios from 'axios';
+import { User } from 'src/database/schemas/user.schema';
+import { readFileSync } from 'fs';
+import * as FormData from 'form-data';
 
 @Injectable()
 export class JobService {
   constructor(
     @InjectModel(Job.name) private jobModel: Model<Job>,
-    private readonly userService: UserService,
+    @InjectModel(User.name) private userModel: Model<User>
   ) {}
 
   async saveJob(jobId: string, userId: string) {
@@ -104,6 +107,45 @@ export class JobService {
     return await this.jobModel.findById(id).select('-_id -savedBy');
   }
 
+  async matchJob(userId: string, jobDescription: string) {
+    try {
+      // Get user's CV
+      const user = await this.userModel.findById(userId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      if (!user.cv) {
+        throw new BadRequestException('User has no CV uploaded');
+      }
+
+      // Create form data
+      const form = new FormData();
+      form.append('resume', readFileSync(user.cv), {
+        filename: user.cv.split('/').pop(),
+        contentType: 'application/pdf'
+      });
+      form.append('job_description', jobDescription);
+
+      const response = await axios.post('http://localhost:8000/match', form, {
+        headers: {
+          ...form.getHeaders(),
+          'accept': 'application/json'
+        },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Error in matchJob:', error);
+      if (error.response?.data) {
+        console.error('Server response:', error.response.data);
+      }
+      throw new BadRequestException('Failed to match CV with job description');
+    }
+  }
+
   // get ats score
   async getAtsScore(user: any, jobId: string) {   
     const job = await this.jobModel.findById(jobId);
@@ -111,11 +153,16 @@ export class JobService {
       throw new NotFoundException('Job not found');
     } 
 
-    // Step 1: Load the PDF file
-    const cvFilePath = await this.userService.getCV(user); // assuming this is the file path
-    if (!cvFilePath) {
-      throw new BadRequestException('CV file not found for the user');
+    const User = await this.userModel.findById(user).exec();
+    if (!User ) {
+      throw new NotFoundException('User not found');
     }
+    if (!User.cv) {
+      throw new BadRequestException('User has no CV uploaded');
+    }
+
+    // Step 1: Load the PDF file
+    const cvFilePath = User.cv; // assuming this is the file path
     const cvBuffer = fs.readFileSync(cvFilePath);
 
     // Step 2: Extract text from the PDF
