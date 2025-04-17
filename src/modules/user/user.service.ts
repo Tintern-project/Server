@@ -232,4 +232,15 @@ export class UserService {
     
     return user.education;
   }
+
+  // get cv 
+  async getCV(userId: string): Promise<string> {
+    const user = await this.userModel.findById(userId).exec();
+    
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    
+    return user.cv;
+  }
 }

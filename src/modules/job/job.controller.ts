@@ -31,6 +31,16 @@ export class JobController {
     return this.jobService.removeSavedJob(id, user?.userId);
   }
 
+  @Get('ats/:jobId')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Test job filtering' })
+  @ApiResponse({ status: 200, description: 'Api responded' })
+  @ApiNotFoundResponse({ description: 'Job not found' })
+  @ApiBadRequestResponse({ description: 'No cv found in user account' })
+  async AtsScore(@Param('jobId') jobId: string , @GetUser() user: any ) {
+    return this.jobService.getAtsScore(user?.userId || user?._userId, jobId);
+  }
+
   @Get('saved')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all saved jobs for the current user' })

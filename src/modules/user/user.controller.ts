@@ -106,6 +106,15 @@ export class UserController {
     return this.userService.changeEducation(user.userId, educationDto as any);
   }
 
+  @Get('cv')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get the CV of the user' })
+  @ApiResponse({ status: 200, description: 'The CV has been successfully retrieved' })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  async getCv(@GetUser() user: any) {
+    return await this.userService.getCV(user?.userId || user?._userId);
+  }
+
   @Delete('experience/:id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'delete an experience of a user if it exists' })
