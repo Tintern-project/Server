@@ -119,9 +119,6 @@ export class User extends Document{
   @Prop({ required: false, type: [ExperienceSchema], default: []})
   experience: Experience[];
 
-  @Prop({ ref: "Application" })
-  applications: string[];
-
   @Prop({ ref: "Job" })
   savedJobs: string[];
 
