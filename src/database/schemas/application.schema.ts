@@ -15,6 +15,10 @@ export class Application extends Document{
 
   @Prop()
   atsScore: number;
+ 
 }
 
 export const ApplicationSchema = SchemaFactory.createForClass(Application);
+
+//Unique index to enforce checks and avoid race conditions in findOne
+ApplicationSchema.index({ userId: 1, jobId: 1 }, { unique: true });
