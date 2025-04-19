@@ -174,7 +174,7 @@ export class JobService {
 
     Your job is to:
     1. Estimate the match between a candidate's resume and a job description with a score from 0 to 100. You must always return a number even if you are uncertain, dont be too harsh in the scoring and dont focus too much on any unmentioned skills or similar skills, but focus on the skills in the job description that should be in the resume.
-    2. Give an honest, direct description of what the resume is missing like what keywords are missing or should improve to match the job description. Do not compliment the candidate.
+    2. Give an honest, direct description of what the resume is missing like what keywords are missing or should improve to match the job description. Do not compliment the candidate, make it the shortest possible suggestion and focus on missing keypoints, exactly 30 words .
     3. Return the response strictly in this JSON format without any additional text just start with { and end with }:
 
     {
