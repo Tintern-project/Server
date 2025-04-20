@@ -35,7 +35,7 @@ export class JobController {
 
   @Get('ats/:jobId')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Test job filtering' })
+  @ApiOperation({ summary: 'Ats scoring system' })
   @ApiResponse({ status: 200, description: 'Api responded' })
   @ApiNotFoundResponse({ description: 'Job not found' })
   @ApiBadRequestResponse({ description: 'No cv found in user account' })
