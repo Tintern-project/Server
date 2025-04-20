@@ -8,6 +8,7 @@ import * as pdfParse from 'pdf-parse';
 import * as fs from 'fs';
 import axios from 'axios';
 import { User } from 'src/database/schemas/user.schema';
+import { ATSScore } from 'src/database/schemas/ats-score.schema';
 import { readFileSync } from 'fs';
 import * as FormData from 'form-data';
 
@@ -15,7 +16,8 @@ import * as FormData from 'form-data';
 export class JobService {
   constructor(
     @InjectModel(Job.name) private jobModel: Model<Job>,
-    @InjectModel(User.name) private userModel: Model<User>
+    @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(ATSScore.name) private atsScoreModel: Model<ATSScore>
   ) {}
 
   async saveJob(jobId: string, userId: string) {
@@ -208,6 +210,12 @@ export class JobService {
     try {
       // Parse the raw response as JSON
       const parsed = JSON.parse(rawResponse);
+      // Saves the ats score
+      await this.atsScoreModel.create({
+        userId: User._id,
+        jobId: job._id,
+        atsScore: parsed,
+      });
       return parsed;
     } catch (error) {
       throw new Error("AI response is not valid JSON: " + rawResponse);
