@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Job } from 'src/database/schemas/job.schema';
@@ -157,18 +157,23 @@ export class JobService {
     if (!User ) {
       throw new NotFoundException('User not found');
     }
-    if (!User.cv) {
+
+    if (!User.cv || User.cv.trim() === '') {
       throw new BadRequestException('User has no CV uploaded');
     }
 
+    let extractedCVText = '';
     // Step 1: Load the PDF file
-    const cvFilePath = User.cv; // assuming this is the file path
-    const cvBuffer = fs.readFileSync(cvFilePath);
+    try{
+      const cvFilePath = User.cv; // assuming this is the file path
+      const cvBuffer = fs.readFileSync(cvFilePath);
 
-    // Step 2: Extract text from the PDF
-    const cvData = await pdfParse(cvBuffer);
-    const extractedCVText = cvData.text;
-
+      // Step 2: Extract text from the PDF
+      const cvData = await pdfParse(cvBuffer);
+      extractedCVText = cvData.text;
+    } catch (error) {
+      throw new InternalServerErrorException('Cv not found on server');
+    }
     const systemPrompt = `
     You are an ATS (Applicant Tracking System) evaluation assistant for a job website. 
 
@@ -188,29 +193,32 @@ export class JobService {
 
     Job Description: ${job.requirements}
     `;
-    
-    const completion = await deepseek.chat.completions.create({
-      model: "deepseek/deepseek-r1:free",
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt.trim(),
-        },
-        {
-          role: "user",
-          content: userPrompt.trim(),
-        },
-      ]
-    });
 
-    const rawResponse = completion.choices[0].message.content;
+    try{
+      const completion = await deepseek.chat.completions.create({
+        model: "deepseek/deepseek-r1:free",
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt.trim(),
+          },
+          {
+            role: "user",
+            content: userPrompt.trim(),
+          },
+        ]
+      });
 
-    try {
-      // Parse the raw response as JSON
-      const parsed = JSON.parse(rawResponse);
-      return parsed;
-    } catch (error) {
-      throw new Error("AI response is not valid JSON: " + rawResponse);
+      const rawResponse = completion.choices[0].message.content;
+      try {
+        // Parse the raw response as JSON
+        const parsed = JSON.parse(rawResponse);
+        return parsed;
+      } catch (error) {
+        throw new Error("AI response is not valid JSON: " + rawResponse);
+      }
+    }catch (error) {
+      throw new InternalServerErrorException('Failed to connect to AI service');
     }
   }
 }
