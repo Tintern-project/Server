@@ -7,6 +7,7 @@ import deepseek from '../../config/deepseek.config'; // Adjust the import path a
 import * as pdfParse from 'pdf-parse';
 import * as fs from 'fs';
 import axios from 'axios';
+import * as crypto from 'crypto';
 import { User } from 'src/database/schemas/user.schema';
 import { ATSScore } from 'src/database/schemas/ats-score.schema';
 import { readFileSync } from 'fs';
@@ -165,11 +166,23 @@ export class JobService {
     }
 
     let extractedCVText = '';
+    let resumeHash = '';
     // Step 1: Load the PDF file
     try{
       const cvFilePath = User.cv; // assuming this is the file path
       const cvBuffer = fs.readFileSync(cvFilePath);
 
+      resumeHash = crypto.createHash('sha256').update(cvBuffer).digest('hex');
+
+      const existingScore = await this.atsScoreModel.findOne({
+        userId: User._id,
+        jobId: job._id,
+        resumeHash: resumeHash
+      }).exec();
+
+      if(existingScore) {
+        return existingScore.atsScore;
+      }
       // Step 2: Extract text from the PDF
       const cvData = await pdfParse(cvBuffer);
       extractedCVText = cvData.text;
@@ -221,6 +234,7 @@ export class JobService {
           userId: User._id,
           jobId: job._id,
           atsScore: parsed,
+          resumeHash: resumeHash
         });
         return parsed;
       } catch (error) {

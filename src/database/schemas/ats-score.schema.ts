@@ -22,6 +22,9 @@ export class ATSScore extends Document {
 
   @Prop({ default: Date.now })
   scoredAt: Date;
+
+  @Prop({ type: String, required: true })
+  resumeHash: string;
 }
 
 export const ATSScoreSchema = SchemaFactory.createForClass(ATSScore);

@@ -7,16 +7,16 @@ import { CreateATSScoreDto } from './dto/create-ats-score.dto';
 @Injectable()
 export class ATSScoreService {
   constructor(
-    @InjectModel(ATSScore.name) private resumeScoreModel: Model<ATSScore>,
+    @InjectModel(ATSScore.name) private atsScoreModel: Model<ATSScore>,
   ) {}
 
   async create(createATSScoreDto : CreateATSScoreDto): Promise<ATSScore> {
-    const createdScore = new this.resumeScoreModel(createATSScoreDto);
+    const createdScore = new this.atsScoreModel(createATSScoreDto);
     return createdScore.save();
   }
 
   async findAllByUser(user: any): Promise<ATSScore[]> {
     const userId = user.userId;
-    return this.resumeScoreModel.find({ userId }).sort({ scoredAt: -1 }).exec();
+    return this.atsScoreModel.find({ userId }).sort({ scoredAt: -1 }).exec();
   }
 }
