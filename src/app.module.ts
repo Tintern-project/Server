@@ -9,6 +9,7 @@ import { JobModule } from './modules/job/job.module';
 import { AppConfig } from './config/app.config';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './Auth/auth.module';
+import { ATSScoreModule } from './modules/ats-score/ats-score.module'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AuthModule } from './Auth/auth.module';
     UserModule,
     ApplicationModule,
     JobModule,
+    ATSScoreModule,
   ],
   controllers: [AppController],
   providers: [AppService],
