@@ -217,6 +217,10 @@ export class JobService {
         // Parse the raw response as JSON
         const parsed = JSON.parse(rawResponse);
         // Saves the ats score
+        await this.atsScoreModel.findOneAndDelete({
+          userId: User._id,
+          jobId: job._id
+        })
         await this.atsScoreModel.create({
           userId: User._id,
           jobId: job._id,
