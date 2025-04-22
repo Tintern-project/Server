@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Job } from 'src/database/schemas/job.schema';
 import { FilterCriteriaDto } from './dto/filterCriteriaDto';
 import deepseek from '../../config/deepseek.config'; // Adjust the import path as necessary
@@ -150,6 +150,10 @@ export class JobService {
 
   // get ats score
   async getAtsScore(user: any, jobId: string) {   
+    if (!mongoose.isValidObjectId(jobId)) {
+      throw new BadRequestException('Invalid job ID');
+    }
+
     const job = await this.jobModel.findById(jobId);
     if (!job) {
       throw new NotFoundException('Job not found');
