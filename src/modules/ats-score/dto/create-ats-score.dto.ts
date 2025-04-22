@@ -24,4 +24,8 @@ export class CreateATSScoreDto {
   @ValidateNested()
   @Type(() => AtsScoreContent)
   atsScore: AtsScoreContent;
+
+  @IsString()
+  @IsNotEmpty()
+  resumeHash: string;
 }
