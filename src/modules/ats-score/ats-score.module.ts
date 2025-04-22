@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { DatabaseModule } from 'src/database/database.module'
-import { ATSScore , ATSScoreSchema } from '../../database/schemas/ats-score.schema';
 import { ATSScoreService } from './ats-score.service';
 import { ATSScoreController } from './ats-score.controller';
+import { DatabaseModule } from 'src/database/database.module';
 
 @Module({
   imports: [DatabaseModule],
