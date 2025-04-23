@@ -42,7 +42,10 @@ export class ChatbotService {
         ],
         temperature: 0.7,
       });
-
+      // Safety check before accessing the message
+      if (!completion?.choices?.length || !completion.choices[0]?.message?.content) {
+        throw new Error('No valid response from Deepseek completion API');
+      }
       return this.processResponse(completion.choices[0].message.content);
     } catch (error) {
       throw new Error(`Chatbot error: ${error.message}`);
