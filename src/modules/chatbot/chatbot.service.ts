@@ -1,6 +1,10 @@
+// src/modules/chatbot/chatbot.service.ts
 import { Injectable } from '@nestjs/common';
 import deepseek from '../../config/deepseek.config';
 import { ChatMessageDto } from './dto/chat-message.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Job } from '../../database/schemas/job.schema';
 
 @Injectable()
 export class ChatbotService {
@@ -16,23 +20,24 @@ export class ChatbotService {
   refuse to answer them and say "Nagar restricted me, please ask professional Questions"
   `;
 
-  /**
-   * Handle an incoming chat message.
-   * @param userId - ID of the authenticated user
-   * @param chatDto - Parsed DTO containing message and optional context
-   */
-  async handleMessage(
-    userId: string | null,
-    chatDto: ChatMessageDto,
-  ) {
+  constructor(
+    @InjectModel(Job.name) private readonly jobModel: Model<Job>,
+  ) {}
+
+  async handleMessage(userId: string | null, chatDto: ChatMessageDto) {
     try {
+      const matchedJobs = await this.searchJobsByText(chatDto.message);
+      const jobContext = matchedJobs.length
+        ? this.formatJobsForPrompt(matchedJobs)
+        : 'No relevant job data found.';
+
       const completion = await deepseek.chat.completions.create({
         model: 'deepseek/deepseek-r1:free',
         messages: [
           { role: 'system', content: this.systemPrompt },
           {
             role: 'user',
-            content: this.buildUserPrompt(userId, chatDto),
+            content: this.buildUserPrompt(userId, chatDto, jobContext),
           },
         ],
         temperature: 0.7,
@@ -44,17 +49,29 @@ export class ChatbotService {
     }
   }
 
-  /**
-   * Construct the user prompt, including user ID and context
-   */
-  private buildUserPrompt(userId: string, dto: ChatMessageDto) {
+  private buildUserPrompt(userId: string | null, dto: ChatMessageDto, jobContext: string) {
     const context = dto.context ? `Context: ${dto.context}` : 'No specific context';
-    return `User (${userId}): ${dto.message}\n${context}`;
+    return `User (${userId}): ${dto.message}\n${context}\n\nRelevant Jobs:\n${jobContext}`;
   }
 
-  /**
-   * Format the raw response into structured output
-   */
+  private formatJobsForPrompt(jobs: Job[]): string {
+    return jobs.map(job =>
+      `Job Title: ${job.title}
+Company: ${job.company}
+Location: ${job.city}, ${job.country}
+Role: ${job.role} (${job.type})
+Industry: ${job.industry ?? 'N/A'}
+Deadline: ${job.applicationDeadline.toDateString()}
+Link: ${job.applicationLink}`
+    ).join('\n\n');
+  }
+
+  private async searchJobsByText(text: string): Promise<Job[]> {
+    return this.jobModel.find({
+      $text: { $search: text },
+    }).limit(5).exec();
+  }
+
   private processResponse(rawResponse: string) {
     return {
       message: rawResponse,
