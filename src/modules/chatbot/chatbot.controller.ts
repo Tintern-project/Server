@@ -26,7 +26,7 @@ import {
     @Controller('chatbot')
     export class ChatbotController {
     constructor(private readonly chatbotService: ChatbotService) {}
-
+// i have built the chatbot on a nonautharized base we can change it later but i see this as better aproach also it won't fetch any data unless he is logged so its an added functionality
     @Public()                            // ← no auth here
     @Post('message')
     @ApiOperation({ summary: 'Send a message to the chatbot and receive a response' })
