@@ -5,7 +5,7 @@ import { UserService } from './user.service';
 import { AuthGuard } from 'src/Auth/guards/authentication.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GetUser } from 'src/Auth/decorators/get-user.decorator';
-import {diskStorage} from 'multer';
+import { diskStorage, memoryStorage } from 'multer';
 import { ExperienceDto } from './dto/ExperienceDto';
 import { EducationDto } from './dto/EducationDto';
 import { updateEducationDto } from './dto/updateEducationDto';
@@ -14,7 +14,7 @@ import { updateExperienceDto } from './dto/updateExperienceDto';
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Put('my-profile')
   @ApiBearerAuth()
@@ -51,22 +51,11 @@ export class UserController {
       },
     },
   })
-  
+
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: (req, file, cb) => {
-          // Using process.cwd() ensures the folder is relative to where the app is started.
-          const uploadPath = 'uploads';
-          cb(null, uploadPath);
-        },
-        filename: (req, file, cb) => {
-          // Create a unique filename using a timestamp
-          const filename = `${Date.now()}-${file.originalname}`;
-          cb(null, filename);
-        },
-      }),
-    }),
+      storage: memoryStorage(),
+    })
   )
   uploadPdf(@UploadedFile() file: Express.Multer.File, @GetUser() user: any) {
     return this.userService.uploadAndUpdate(file, user?.userId || user?._userId);
@@ -94,7 +83,7 @@ export class UserController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Add an experience to a user if it does not already exist' })
   @ApiBody({ type: ExperienceDto })
-  addExperience(@GetUser() user: any, @Body() experienceDto : ExperienceDto){
+  addExperience(@GetUser() user: any, @Body() experienceDto: ExperienceDto) {
     return this.userService.addExperience(user.userId, experienceDto as any);
   }
 
@@ -102,7 +91,7 @@ export class UserController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Add an education record to a user if it does not already exist' })
   @ApiBody({ type: EducationDto })
-  changeEducation(@GetUser() user: any, @Body() educationDto: EducationDto){
+  changeEducation(@GetUser() user: any, @Body() educationDto: EducationDto) {
     return this.userService.changeEducation(user.userId, educationDto as any);
   }
 
@@ -118,21 +107,21 @@ export class UserController {
   @Delete('experience/:id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'delete an experience of a user if it exists' })
-  deleteExperience(@GetUser() user: any, @Param('id') ID: String){
+  deleteExperience(@GetUser() user: any, @Param('id') ID: String) {
     return this.userService.deleteExperience(user.userId, ID);
   }
 
   @Delete('education/:id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'delete an education of a user if it exists' })
-  deleteEducation(@GetUser() user: any, @Param('id') ID: String){
+  deleteEducation(@GetUser() user: any, @Param('id') ID: String) {
     return this.userService.deleteEducation(user.userId, ID);
   }
 
   @Put('experience/:id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Edit an experience of a user if it exists' })
-  editExperience(@GetUser() user: any, @Body() newExperience: updateExperienceDto, @Param('id') ID: String){
+  editExperience(@GetUser() user: any, @Body() newExperience: updateExperienceDto, @Param('id') ID: String) {
 
     return this.userService.editExperience(user.userId, ID, newExperience);
   }
@@ -140,7 +129,7 @@ export class UserController {
   @Put('education/:id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Edit an education of a user if it exists' })
-  editEducation(@GetUser() user: any, @Body() newEducation: updateEducationDto, @Param('id') ID: String){
+  editEducation(@GetUser() user: any, @Body() newEducation: updateEducationDto, @Param('id') ID: String) {
 
     return this.userService.editEducation(user.userId, ID, newEducation);
   }
