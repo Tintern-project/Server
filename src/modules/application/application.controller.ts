@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, UseGuards, Param, Patch } from "@nestjs/common";
 import { ApplicationService } from "./application.service";
 import { AuthGuard } from "src/Auth/guards/authentication.guard";
 import { GetUser } from "src/Auth/decorators/get-user.decorator";
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Application } from "src/database/schemas/application.schema";
 import { ResponseDto } from "./dto/responseDto";
 
@@ -29,6 +29,24 @@ export class ApplicationController {
     @ApiOkResponse({type: ResponseDto})
     async getApplications(@GetUser() user: any){
         return await this.applicationService.getApplications(user.userId);
+    }
+
+    @Get(':jobId')
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Retreive the status of the job application'})
+    @ApiOkResponse({ description: 'Application status successfully retrieved'})
+    async getApplicationStatus(@GetUser() user: any, @Param('jobId') jobId: string): Promise<string>{
+        return await this.applicationService.getApplicationStatus(user?.userId, jobId);
+    }
+
+    @Patch(':jobId')
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Update the status of the job application'})
+    @ApiOkResponse({ description: 'Application status successfully updated'})
+    @ApiBadRequestResponse({ description: 'Invalid Status'})
+    @ApiNotFoundResponse({ description: 'No application submitted by the user for this job'})
+    async changeApplicationStatus(@Param('jobId') jobId: string,@GetUser() user: any, @Body('status') status: string): Promise<Application>{
+        return await this.applicationService.changeApplicationStatus(jobId, user?.userId, status);
     }
 
 }
