@@ -59,8 +59,8 @@ export class JobService {
   }
 
   async getAllJobs() {
-    return await this.jobModel.find().select('title company country city role industry type');
-  }  
+    return await this.jobModel.find().select('title company country city role industry type applicationDeadline');
+  }
 
   async filterJobs(filterCriteria: FilterCriteriaDto) {
     const { keyword, country, city, role, industry, type } = filterCriteria;
@@ -94,7 +94,7 @@ export class JobService {
       query['type'] = new RegExp(type, 'i');
     }
 
-    return await this.jobModel.find(query).select('title company country city role industry type');
+    return await this.jobModel.find(query).select('title company country city role industry type applicationDeadline');
   }
 
   // Method to return all filters
