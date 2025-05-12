@@ -173,9 +173,15 @@ export class JobService {
     let resumeHash = '';
     // Step 1: Load the PDF file
     try{
-      const cvFilePath = User.cv; // assuming this is the file path
-      const cvBuffer = fs.readFileSync(cvFilePath);
-
+      const cvUrl = User.cv; // now this is a URL
+      
+      // Fetch the PDF from URL
+      const response = await axios.get(cvUrl, {
+        responseType: 'arraybuffer'
+      });
+      
+      const cvBuffer = Buffer.from(response.data);
+      
       resumeHash = crypto.createHash('sha256').update(cvBuffer).digest('hex');
 
       const existingScore = await this.atsScoreModel.findOne({
@@ -191,7 +197,7 @@ export class JobService {
       const cvData = await pdfParse(cvBuffer);
       extractedCVText = cvData.text;
     } catch (error) {
-      throw new InternalServerErrorException('Cv not found on server');
+      throw new InternalServerErrorException('Error Retrieving CV');
     }
     const systemPrompt = `
     You are an ATS (Applicant Tracking System) evaluation assistant for a job website. 
