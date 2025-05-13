@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Job } from 'src/database/schemas/job.schema';
 import { FilterCriteriaDto } from './dto/filterCriteriaDto';
-import deepseek from '../../config/deepseek.config'; // Adjust the import path as necessary
 import * as pdfParse from 'pdf-parse';
 import * as fs from 'fs';
 import axios from 'axios';
@@ -12,6 +11,8 @@ import { User } from 'src/database/schemas/user.schema';
 import { ATSScore } from 'src/database/schemas/ats-score.schema';
 import { readFileSync } from 'fs';
 import * as FormData from 'form-data';
+import client from '../../config/deepseek.config';
+import { isUnexpected } from '@azure-rest/ai-inference';
 
 @Injectable()
 export class JobService {
@@ -19,7 +20,7 @@ export class JobService {
     @InjectModel(Job.name) private jobModel: Model<Job>,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(ATSScore.name) private atsScoreModel: Model<ATSScore>
-  ) {}
+  ) { }
 
   async saveJob(jobId: string, userId: string) {
     const job = await this.jobModel.findById(jobId);
@@ -43,16 +44,16 @@ export class JobService {
     if (!job) {
       throw new NotFoundException('Job not found');
     }
-  
+
     const index = job.savedBy.indexOf(userId);
     if (index === -1) {
       throw new BadRequestException('Job is not saved by this user');
     }
-  
+
     job.savedBy.splice(index, 1);
     return job.save();
   }
-  
+
 
   async getSavedJobs(userId: string) {
     return this.jobModel.find({ savedBy: userId });
@@ -102,11 +103,11 @@ export class JobService {
     const industries = await this.jobModel.distinct('industry');
     const countries = await this.jobModel.distinct('country');
     const cities = await this.jobModel.distinct('city');
-    return { industries, countries, cities};
+    return { industries, countries, cities };
   }
 
   // Get job by ID
-  async getJobById(id : string){
+  async getJobById(id: string) {
     return await this.jobModel.findById(id).select('-_id -savedBy');
   }
 
@@ -150,7 +151,7 @@ export class JobService {
   }
 
   // get ats score
-  async getAtsScore(user: any, jobId: string) {   
+  async getAtsScore(user: any, jobId: string) {
     if (!mongoose.isValidObjectId(jobId)) {
       throw new BadRequestException('Invalid job ID');
     }
@@ -158,10 +159,10 @@ export class JobService {
     const job = await this.jobModel.findById(jobId);
     if (!job) {
       throw new NotFoundException('Job not found');
-    } 
+    }
 
     const User = await this.userModel.findById(user).exec();
-    if (!User ) {
+    if (!User) {
       throw new NotFoundException('User not found');
     }
 
@@ -172,16 +173,16 @@ export class JobService {
     let extractedCVText = '';
     let resumeHash = '';
     // Step 1: Load the PDF file
-    try{
+    try {
       const cvUrl = User.cv; // now this is a URL
-      
+
       // Fetch the PDF from URL
       const response = await axios.get(cvUrl, {
         responseType: 'arraybuffer'
       });
-      
+
       const cvBuffer = Buffer.from(response.data);
-      
+
       resumeHash = crypto.createHash('sha256').update(cvBuffer).digest('hex');
 
       const existingScore = await this.atsScoreModel.findOne({
@@ -190,7 +191,7 @@ export class JobService {
         resumeHash: resumeHash
       }).exec();
 
-      if(existingScore) {
+      if (existingScore) {
         return existingScore.atsScore;
       }
       // Step 2: Extract text from the PDF
@@ -219,22 +220,32 @@ export class JobService {
     Job Description: ${job.requirements}
     `;
 
-    try{
-      const completion = await deepseek.chat.completions.create({
-        model: "deepseek/deepseek-r1:free",
-        messages: [
-          {
-            role: "system",
-            content: systemPrompt.trim(),
-          },
-          {
-            role: "user",
-            content: userPrompt.trim(),
-          },
-        ]
+    try {
+      const completion = await client.path("/chat/completions").post({
+        body: {
+          messages: [
+            {
+              role: "system",
+              content: systemPrompt.trim(),
+            },
+            {
+              role: "user",
+              content: userPrompt.trim(),
+            },
+          ],
+          temperature: 1,
+          top_p: 1,
+          model: 'openai/gpt-4.1-mini'
+        }
       });
+
+      console.log(completion);
+
       
-      const rawResponse = completion.choices[0].message.content;
+      if (isUnexpected(completion)) {
+        throw new Error('Unexpected response from AI service');
+      }
+      const rawResponse = completion.body.choices[0].message.content;
       
       try {
         // Parse the raw response as JSON
@@ -254,7 +265,7 @@ export class JobService {
       } catch (error) {
         throw new Error("AI response is not valid JSON: " + rawResponse);
       }
-    }catch (error) {
+    } catch (error) {
       throw new InternalServerErrorException('Failed to connect to AI service');
     }
   }
