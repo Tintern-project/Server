@@ -11,7 +11,7 @@ import { User } from 'src/database/schemas/user.schema';
 import { ATSScore } from 'src/database/schemas/ats-score.schema';
 import { readFileSync } from 'fs';
 import * as FormData from 'form-data';
-import client from '../../config/deepseek.config';
+import client from '../../config/gpt.config';
 import { isUnexpected } from '@azure-rest/ai-inference';
 
 @Injectable()

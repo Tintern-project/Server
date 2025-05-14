@@ -1,13 +1,8 @@
-import ModelClient, { isUnexpected } from "@azure-rest/ai-inference";
-import { AzureKeyCredential } from "@azure/core-auth";
+import { OpenAI } from 'openai';
 
-const token = process.env.GITHUB_TOKEN;
-const endpoint = "https://models.github.ai/inference";
-const model = "openai/gpt-4.1-mini";
+const deepseek = new OpenAI({
+    apiKey:process.env.OPENROUTER_API_KEY,
+    baseURL:process.env.OPENROUTER_BASE_URL,
+  });
 
-const client = ModelClient(
-  endpoint,
-  new AzureKeyCredential(token),
-);
-
-export default client;
+export default deepseek;
