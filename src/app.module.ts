@@ -10,6 +10,7 @@ import { AppConfig } from './config/app.config';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './Auth/auth.module';
 import { ATSScoreModule } from './modules/ats-score/ats-score.module'
+import { ChatbotModule } from './modules/chatbot/chatbot.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ATSScoreModule } from './modules/ats-score/ats-score.module'
     ApplicationModule,
     JobModule,
     ATSScoreModule,
+    ChatbotModule,
   ],
   controllers: [AppController],
   providers: [AppService],
