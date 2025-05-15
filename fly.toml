@@ -1,0 +1,38 @@
+# fly.toml app configuration file generated for tintern-server on 2025-05-15T14:25:27+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'tintern-server'
+primary_region = 'ams'
+
+[experimental]
+  auto_rollback = true
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[env]
+  NODE_ENV = 'production'
+  ALLOWED_ORIGINS = 'https://tintern-client.fly.dev'
+  ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE'
+  MONGO_URI = 'mongodb+srv://db:dbPass@tintern.fyzij.mongodb.net'
+  API_PREFIX = 'api/v1'
+  JWT_EXPIRATION = '3600s'
+  OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
+  CLOUD_NAME = 'dahahjv6e'
+  GITHUB_TOKEN = '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'
+  PORT='8080'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

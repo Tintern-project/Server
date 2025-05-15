@@ -13,9 +13,16 @@ async function bootstrap() {
   
   app.use(cookieParser());
   
+  // Get allowed origins from environment variable or use defaults
+  const allowedOrigins = process.env.ALLOWED_ORIGINS 
+    ? process.env.ALLOWED_ORIGINS.split(',') 
+    : ['http://localhost:3001', 'https://tintern-client.fly.dev'];
+  
+  console.log('CORS allowed origins:', allowedOrigins);
+  
   app.enableCors({
-    origin: 'http://localhost:3001',//change to client port
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    origin: allowedOrigins,
+    methods: process.env.ALLOWED_METHODS || 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
 
@@ -38,10 +45,12 @@ async function bootstrap() {
         }
 
   await app.init();
-  await app.listen(process.env.PORT ?? 3000);
+  const port = process.env.PORT ?? 8080;
+  const host = process.env.HOST ?? '0.0.0.0';
+  await app.listen(port, host);
   cachedApp = app;
-  console.log(`Application is running on: http://localhost:${process.env.PORT}`);
-  console.log(`access the API documentaion : http://localhost:${process.env.PORT}/api/v1/docs`);
+  console.log(`Application is running on: ${host}:${port}`);
+  console.log(`access the API documentation: ${host}:${port}/api/v1/docs`);
 }
 
 bootstrap();

@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Education, Experience, User } from '../../database/schemas/user.schema';
-import { UpdateUserDto } from './dto/updateUserDTO';
+import { UpdateUserDto } from './dto/UpdateUserDto';
 import { MyProfileDto } from './dto/MyProfileDto';
 import { CreateUserDto } from './dto/CreateUserDto';
 import { unlink } from 'fs/promises';
